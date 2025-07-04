@@ -2,6 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Models\TransactionModel;
+use App\Models\TransactionDetailModel;
+
+
 class TransaksiController extends BaseController
 {
     protected $cart;
@@ -17,6 +21,8 @@ class TransaksiController extends BaseController
         $this->cart = \Config\Services::cart();
         $this->client = new \GuzzleHttp\Client();
         $this->apiKey = env('COST_KEY');
+        $this->transaction = new TransactionModel;
+        $this->transaction_detail = new TransactionDetailModel;
     }
 
     public function index()

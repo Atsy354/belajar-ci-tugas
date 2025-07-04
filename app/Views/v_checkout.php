@@ -109,6 +109,7 @@ $(document).ready(function() {
     },
     minimumInputLength: 3
 });
+
 $("#kelurahan").on('change', function() {
     var id_kelurahan = $(this).val(); 
     $("#layanan").empty();
