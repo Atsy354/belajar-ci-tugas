@@ -32,25 +32,49 @@ class TransaksiController extends BaseController
         return view('v_keranjang', $data);
     }
 
-    public function cart_add()
-    {
-        $this->cart->insert(array(
-            'id'        => $this->request->getPost('id'),
-            'qty'       => 1,
-            'price'     => $this->request->getPost('harga'),
-            'name'      => $this->request->getPost('nama'),
-            'options'   => array('foto' => $this->request->getPost('foto'))
-        ));
-        session()->setflashdata('success', 'Produk berhasil ditambahkan ke keranjang. (<a href="' . base_url() . 'keranjang">Lihat</a>)');
-        return redirect()->to(base_url('/'));
+   public function cart_add()
+{
+    // 1️⃣ Ambil data produk dari form
+    $produkId    = $this->request->getPost('id');       // ID produk
+    $produkNama  = $this->request->getPost('nama');     // Nama produk
+    $produkHarga = $this->request->getPost('harga');    // Harga asli produk
+    $produkFoto  = $this->request->getPost('foto');     // Foto produk
+
+    // 2️⃣ Ambil diskon terbaru dari tabel diskon
+    $diskonModel = new \App\Models\DiskonModel();
+    $diskon = $diskonModel->orderBy('tanggal', 'DESC')->first(); // Ambil 1 diskon terbaru
+
+    // 3️⃣ Hitung harga setelah diskon nominal (dalam rupiah)
+    $hargaSetelahDiskon = $produkHarga;
+    if ($diskon) {
+        $hargaSetelahDiskon -= $diskon['nominal']; // Kurangi harga dengan nominal diskon
+        if ($hargaSetelahDiskon < 0) {
+            $hargaSetelahDiskon = 0; // Harga tidak boleh negatif
+        }
     }
 
-    public function cart_clear()
-    {
-        $this->cart->destroy();
-        session()->setflashdata('success', 'Keranjang Berhasil Dikosongkan');
-        return redirect()->to(base_url('keranjang'));
+    // 4️⃣ Cek apakah produk sudah ada di keranjang
+    foreach ($this->cart->contents() as $item) {
+        if ($item['id'] == $produkId) {
+            session()->setFlashdata('info', 'Produk sudah ada di keranjang.');
+            return redirect()->to(base_url('/'));
+        }
     }
+
+    // 5️⃣ Masukkan produk ke keranjang dengan harga setelah diskon
+    $this->cart->insert([
+        'id'      => $produkId,
+        'qty'     => 1,
+        'price'   => $hargaSetelahDiskon,
+        'name'    => $produkNama,
+        'options' => ['foto' => $produkFoto]
+    ]);
+
+    // 6️⃣ Tampilkan notifikasi berhasil
+    session()->setFlashdata('success', 'Produk berhasil ditambahkan ke keranjang. (<a href="' . base_url() . 'keranjang">Lihat</a>)');
+    return redirect()->to(base_url('/'));
+}
+
 
     public function cart_edit()
     {

@@ -32,6 +32,14 @@
                     <i class="bi bi-receipt"></i>
                     <span>Kategori Produk</span>
                 </a>
+            </li><!-- End KategoriProduk Nav -->
+        <?php
+        ?>
+            <li class="nav-item">   
+                <a class="nav-link <?php echo (uri_string() == 'diskon') ? "" : "collapsed" ?>" href="diskon">
+                    <i class="bi bi-receipt"></i>
+                    <span>Diskon</span>
+                </a>
             </li><!-- End Produk Nav -->
         <?php
         }
@@ -42,6 +50,13 @@
         <span>Profile</span>
     </a>
 </li><!-- End Profile Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link <?php echo (uri_string() == 'faq') ? "" : "collapsed" ?>" href="faq">
+                <i class="bi bi-question-circle"></i>
+                <span>FAQ</span>
+            </a>
+        </li><!--End FAQ Nav -->
         <li class="nav-item">
                 <a class="nav-link <?php echo (uri_string() == 'contact') ? "" : "collapsed" ?>" href="contact">
                     <i class="bi bi-envelope"></i>

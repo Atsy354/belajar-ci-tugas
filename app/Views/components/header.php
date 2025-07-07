@@ -1,3 +1,4 @@
+
  <!-- ======= Header ======= -->
  <header id="header" class="header fixed-top d-flex align-items-center">
 
@@ -9,12 +10,25 @@
   <i class="bi bi-list toggle-sidebar-btn"></i>
 </div><!-- End Logo -->
 
-<div class="search-bar">
-  <form class="search-form d-flex align-items-center" method="POST" action="#">
-    <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-    <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-  </form>
-</div><!-- End Search Bar -->
+<div class="d-flex align-items-center ms-3">
+
+  <div class="search-bar me-3">
+    <form class="search-form d-flex align-items-center" method="POST" action="#">
+      <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+      <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+    </form>
+  </div>
+
+  <?php if (session()->has('diskon')): ?>
+    <div>
+      <span class="badge bg-success">
+        Hari ini ada diskon <?= "Rp" . number_format(session('diskon'), 0, ',', '.') ?> per item
+      </span>
+    </div>
+  <?php endif; ?>
+</div>
+
+
 
 <nav class="header-nav ms-auto">
   <ul class="d-flex align-items-center">

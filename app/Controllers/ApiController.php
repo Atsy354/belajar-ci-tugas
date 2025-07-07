@@ -28,7 +28,7 @@ class ApiController extends ResourceController
      *
      * @return ResponseInterface
      */
-   public function index()
+  public function index()
 {
     $data = [ 
         'results' => [],
@@ -46,17 +46,49 @@ class ApiController extends ResourceController
             $penjualan = $this->transaction->findAll();
             
             foreach ($penjualan as &$pj) {
-                $pj['details'] = $this->transaction_detail->where('transaction_id', $pj['id'])->findAll();
+                $details = $this->transaction_detail->where('transaction_id', $pj['id'])->findAll();
+                $pj['details'] = $details;
+                $pj['jumlah_item'] = count($details); // Tambah jumlah item di sini
             }
 
             $data['status'] = ["code" => 200, "description" => "OK"];
             $data['results'] = $penjualan;
-
         }
     } 
 
     return $this->respond($data);
 }
+
+public function selesaikan($id = null)
+{
+    $headers = $this->request->headers();
+
+    array_walk($headers, function (&$value, $key) {
+        $value = $value->getValue();
+    });
+
+    if (!array_key_exists("Key", $headers) || $headers["Key"] != $this->apiKey) {
+        return $this->respond([
+            'status' => ["code" => 401, "description" => "Unauthorized"]
+        ]);
+    }
+
+    // Update status menjadi 1 (Selesai)
+    $update = $this->transaction->update($id, ['status' => 1]);
+
+    if ($update) {
+        return $this->respond([
+            'status' => ["code" => 200, "description" => "Transaksi diselesaikan"],
+            'id_transaksi' => $id
+        ]);
+    } else {
+        return $this->respond([
+            'status' => ["code" => 400, "description" => "Gagal memperbarui status"]
+        ]);
+    }
+}
+
+
 
     /**
      * Return the properties of a resource object.

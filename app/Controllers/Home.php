@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\ProductModel;    
 use App\Models\TransactionModel;
 use App\Models\TransactionDetailModel;
+use App\Models\DiskonModel;
 
 class Home extends BaseController
 {
@@ -52,5 +53,29 @@ class Home extends BaseController
     $data['product'] = $product;
 
     return view('v_profile', $data);
+}
+
+    public function login()
+{
+    // proses validasi login seperti biasa
+    $username = $this->request->getPost('username');
+    $password = $this->request->getPost('password');
+
+    // ... proses autentikasi user
+    // misalnya sudah berhasil login
+
+    // Cari diskon berdasarkan tanggal hari ini
+    $diskonModel = new DiskonModel();
+    $tanggalHariIni = date('Y-m-d');
+
+    $diskon = $diskonModel->where('tanggal', $tanggalHariIni)->first();
+
+    if ($diskon) {
+        session()->set('diskon', $diskon['nominal']);
+    } else {
+        session()->remove('diskon');
+    }
+
+    return redirect()->to('/dashboard');
 }
 }

@@ -34,10 +34,23 @@ public function login()
             if ($dataUser) {
                 if (password_verify($password, $dataUser['password'])) {
                     session()->set([
-                        'username' => $dataUser['username'],
-                        'role' => $dataUser['role'],
-                        'isLoggedIn' => TRUE
-                    ]);
+    'username' => $dataUser['username'],
+    'role' => $dataUser['role'],
+    'isLoggedIn' => TRUE
+]);
+
+// Cek apakah hari ini ada diskon
+$diskonModel = new \App\Models\DiskonModel();
+$diskon = $diskonModel->where('tanggal', date('Y-m-d'))->first();
+
+if ($diskon) {
+    session()->set('diskon', $diskon['nominal']);
+} else {
+    session()->remove('diskon');
+}
+
+return redirect()->to(base_url('/'));
+
 
                     return redirect()->to(base_url('/'));
                 } else {
