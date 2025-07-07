@@ -1,118 +1,143 @@
-# Running Application Tests
+# TokoApp – Aplikasi Kasir & Web Service (CodeIgniter 4)
 
-This is the quick-start to CodeIgniter testing. Its intent is to describe what
-it takes to set up your application and get it ready to run unit tests.
-It is not intended to be a full description of the test features that you can
-use to test your application. Those details can be found in the documentation.
+TokoApp adalah aplikasi berbasis CodeIgniter 4 yang digunakan untuk mengelola produk, kategori, diskon harian, keranjang belanja, transaksi, serta menyediakan API untuk integrasi dashboard monitoring. Aplikasi ini dibangun untuk mendemonstrasikan implementasi backend web development dan konsumsi web service secara praktis.
 
-## Resources
+## 1. Fitur
 
-* [CodeIgniter 4 User Guide on Testing](https://codeigniter.com/user_guide/testing/index.html)
-* [PHPUnit docs](https://phpunit.de/documentation.html)
-* [Any tutorials on Unit testing in CI4?](https://forum.codeigniter.com/showthread.php?tid=81830)
+### Manajemen Produk
+- Tambah, ubah, hapus produk
+- Upload foto produk
+- Pengelompokan berdasarkan kategori
 
-## Requirements
+### Manajemen Kategori
+- Tambah, ubah, hapus kategori produk
 
-It is recommended to use the latest version of PHPUnit. At the time of this
-writing, we are running version 9.x. Support for this has been built into the
-**composer.json** file that ships with CodeIgniter and can easily be installed
-via [Composer](https://getcomposer.org/) if you don't already have it installed globally.
+### Diskon Harian
+- Admin dapat menambahkan diskon untuk tanggal tertentu
+- Validasi agar tidak bisa menambahkan lebih dari satu diskon di tanggal yang sama
+- Diskon langsung mengurangi harga saat:
+  - Produk dimasukkan ke keranjang
+  - Produk disimpan sebagai detail transaksi
 
-```console
-> composer install
-```
+### Role-Based Access
+- Admin memiliki akses penuh ke fitur diskon
+- User hanya dapat melihat dan belanja produk
 
-If running under macOS or Linux, you can create a symbolic link to make running tests a touch nicer.
+### Keranjang Belanja
+- Menambahkan, mengubah, menghapus produk
+- Harga otomatis terpengaruh oleh diskon aktif
 
-```console
-> ln -s ./vendor/bin/phpunit ./phpunit
-```
+### Checkout
+- Input alamat dan pencarian kelurahan menggunakan Select2 + API RajaOngkir
+- Memilih layanan ekspedisi dan menghitung ongkir otomatis
+- Menyimpan transaksi ke database
 
-You also need to install [XDebug](https://xdebug.org/docs/install) in order
-for code coverage to be calculated successfully. After installing `XDebug`, you must add `xdebug.mode=coverage` in the **php.ini** file to enable code coverage.
+### Web Service (API)
+- Endpoint: /api
+- Protected by API key
+- Menyediakan data transaksi beserta detail pembelian
 
-## Setting Up
+### Dashboard Monitoring (Frontend terpisah)
+- Mengambil dan menampilkan data dari API
+- Menampilkan jumlah item yang dibeli per transaksi
+- Dilengkapi jam real-time
 
-A number of the tests use a running database.
-In order to set up the database edit the details for the `tests` group in
-**app/Config/Database.php** or **.env**.
-Make sure that you provide a database engine that is currently running on your machine.
-More details on a test database setup are in the
-[Testing Your Database](https://codeigniter.com/user_guide/testing/database.html) section of the documentation.
+## 2. Instalasi
 
-## Running the tests
+### Langkah-langkah
 
-The entire test suite can be run by simply typing one command-line command from the main directory.
+1. Clone repositori:
 
-```console
-> ./phpunit
-```
+   bash
+   git clone https://github.com/roroyyan/belajar-ci-tugas.git
+   cd belajar-ci-tugas
+   
 
-If you are using Windows, use the following command.
+2. Install dependency:
 
-```console
-> vendor\bin\phpunit
-```
+   bash
+   composer install
+   
 
-You can limit tests to those within a single test directory by specifying the
-directory name after phpunit.
+3. Konfigurasi file .env:
 
-```console
-> ./phpunit app/Models
-```
+   
+   app.baseURL = 'http://localhost:8080/'
+   database.default.hostname = localhost
+   database.default.database = dbci4
+   database.default.username = root
+   database.default.password = 
+   
 
-## Generating Code Coverage
+4. Import database:
 
-To generate coverage information, including HTML reports you can view in your browser,
-you can use the following command:
+   - Buka phpMyAdmin
+   - Import file db_ci4.sql
 
-```console
-> ./phpunit --colors --coverage-text=tests/coverage.txt --coverage-html=tests/coverage/ -d memory_limit=1024m
-```
+5. Jalankan aplikasi:
 
-This runs all of the tests again collecting information about how many lines,
-functions, and files are tested. It also reports the percentage of the code that is covered by tests.
-It is collected in two formats: a simple text file that provides an overview as well
-as a comprehensive collection of HTML files that show the status of every line of code in the project.
+   bash
+   php spark serve
+   
 
-The text file can be found at **tests/coverage.txt**.
-The HTML files can be viewed by opening **tests/coverage/index.html** in your favorite browser.
+   Akses di: http://localhost:8080
 
-## PHPUnit XML Configuration
+6. Menjalankan Dashboard Monitoring:
 
-The repository has a ``phpunit.xml.dist`` file in the project root that's used for
-PHPUnit configuration. This is used to provide a default configuration if you
-do not have your own configuration file in the project root.
+   - Salin file dashboard.html ke dalam folder public/
+   - Jalankan aplikasi toko seperti biasa
+   - Akses dashboard: http://localhost:8080/dashboard.html
 
-The normal practice would be to copy ``phpunit.xml.dist`` to ``phpunit.xml``
-(which is git ignored), and to tailor it as you see fit.
-For instance, you might wish to exclude database tests, or automatically generate
-HTML code coverage reports.
+## 3. Struktur Proyek
 
-## Test Cases
+| Folder/File              | Keterangan                                              |
+|--------------------------|----------------------------------------------------------|
+| app/Controllers        | Logic aplikasi (produk, diskon, transaksi, web API)     |
+| app/Models             | Query builder untuk interaksi database                  |
+| app/Views              | Tampilan HTML (produk, keranjang, diskon, checkout)     |
+| public/                | Aset publik: Bootstrap, gambar, dan file dashboard      |
+| app/Config/Routes.php  | Routing endpoint aplikasi                               |
+| .env                   | Konfigurasi koneksi database dan baseURL                |
+| README.md              | Dokumentasi proyek ini                                  |
 
-Every test needs a *test case*, or class that your tests extend. CodeIgniter 4
-provides one class that you may use directly:
-* `CodeIgniter\Test\CIUnitTestCase`
+## 4. Dokumentasi Web Service
 
-Most of the time you will want to write your own test cases that extend `CIUnitTestCase`
-to hold functions and services common to your test suites.
+- Endpoint: GET /api
+- Headers:
+  - Content-Type: application/x-www-form-urlencoded
+  - key: random123678abcghi
+- Response format:
 
-## Creating Tests
+  json
+  {
+    "status": "success",
+    "results": [
+      {
+        "id": 1,
+        "username": "royyan",
+        "alamat": "Jl. Melati",
+        "total_harga": "155000",
+        "ongkir": "10000",
+        "status": 0,
+        "created_at": "2025-07-04 22:45:10",
+        "details": [
+          {
+            "product_id": 2,
+            "jumlah": 1,
+            "diskon": 2000,
+            "subtotal_harga": 49000
+          }
+        ]
+      }
+    ]
+  }
+  
 
-All tests go in the **tests/** directory. Each test file is a class that extends a
-**Test Case** (see above) and contains methods for the individual tests. These method
-names must start with the word "test" and should have descriptive names for precisely what
-they are testing:
-`testUserCanModifyFile()` `testOutputColorMatchesInput()` `testIsLoggedInFailsWithInvalidUser()`
+## 5. Pengembang
 
-Writing tests is an art, and there are many resources available to help learn how.
-Review the links above and always pay attention to your code coverage.
-
-### Database Tests
-
-Tests can include migrating, seeding, and testing against a mock or live database.
-Be sure to modify the test case (or create your own) to point to your seed and migrations
-and include any additional steps to be run before tests in the `setUp()` method.
-See [Testing Your Database](https://codeigniter.com/user_guide/testing/database.html)
-for details.
+Nama: Royyan Firdaus
+GitHub: [github.com/LordEnn](https://github.com/LordEnn)  
+Repository: [belajar-ci-tugas](https://github.com/LordEnn/belajar-ci-tugas)  
+Framework: CodeIgniter 4  
+Bahasa: PHP 8.1  
+Tugas Uas PWL
